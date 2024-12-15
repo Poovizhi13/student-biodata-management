@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #f0ad4e;
+      padding: 20px;
+      text-align: center;
+      color: white;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    .container {
+      width: 80%;
+      margin: 20px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"], input[type="date"], input[type="email"], input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    input[type="submit"], button {
+      background-color: #f0ad4e;
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    input[type="submit"]:hover, button:hover {
+      background-color: #ec971f;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background-color: #f0ad4e;
+      color: white;
+    }
+
+    .student-details {
+      margin-top: 20px;
+    }
+
+    .student-details p {
+      font-weight: bold;
+    }
+
+    .edit-request {
+      margin-top: 20px;
+    }
+
+    .photo-container {
+      margin-top: 20px;
+    }
+
+    .photo-container img {
+      max-width: 150px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Student Bio Data Management - User Dashboard</h1>
+</header>
+
+<div class="container">
+  <!-- Bio Data Submission Form -->
+  <form id="bioDataForm" action="/api/submit-biodata" method="POST" enctype="multipart/form-data">
+    <h2>Personal Details</h2>
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+    <div class="form-group">
+      <label for="dob">Date of Birth</label>
+      <input type="date" id="dob" name="dob" required>
+    </div>
+    <div class="form-group">
+      <label for="phone">Phone Number</label>
+      <input type="text" id="phone" name="phone" required>
+    </div>
+    <div class="form-group">
+      <label for="address">Address</label>
+      <input type="text" id="address" name="address" required>
+    </div>
+    <div class="form-group">
+      <label for="regNo">Registration Number</label>
+      <input type="text" id="regNo" name="regNo" required>
+    </div>
+    <div class="form-group">
+      <label for="department">Department</label>
+      <input type="text" id="department" name="department" required>
+    </div>
+    <div class="form-group">
+      <label for="umisNumber">UMIS Number</label>
+      <input type="text" id="umisNumber" name="umisNumber" required>
+    </div>
+    <div class="form-group">
+      <label for="email">Email ID</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+    <div class="form-group">
+      <label for="religion">Religion</label>
+      <input type="text" id="religion" name="religion" required>
+    </div>
+    <div class="form-group">
+      <label for="community">Community</label>
+      <input type="text" id="community" name="community" required>
+    </div>
+    <div class="form-group">
+      <label for="cast">Cast</label>
+      <input type="text" id="cast" name="cast" required>
+    </div>
+    <div class="form-group">
+      <label for="fatherName">Father's Name</label>
+      <input type="text" id="fatherName" name="fatherName" required>
+    </div>
+    <div class="form-group">
+      <label for="motherName">Mother's Name</label>
+      <input type="text" id="motherName" name="motherName" required>
+    </div>
+    <div class="form-group">
+      <label for="fatherOccupation">Father's Occupation</label>
+      <input type="text" id="fatherOccupation" name="fatherOccupation" required>
+    </div>
+    <div class="form-group">
+      <label for="fatherIncome">Father's Annual Income</label>
+      <input type="text" id="fatherIncome" name="fatherIncome" required>
+    </div>
+    <div class="form-group">
+      <label for="motherOccupation">Mother's Occupation</label>
+      <input type="text" id="motherOccupation" name="motherOccupation" required>
+    </div>
+    <div class="form-group">
+      <label for="motherIncome">Mother's Annual Income</label>
+      <input type="text" id="motherIncome" name="motherIncome" required>
+    </div>
+    <div class="form-group">
+      <label for="studentPhoto">Student Photo</label>
+      <input type="file" id="studentPhoto" name="studentPhoto" required>
+    </div>
+    <input type="submit" id="submitButton" value="Submit">
+  </form>
+
+  <!-- Display Semester Marks -->
+  <div class="student-details">
+    <h3>Semester Marks</h3>
+    <ul id="semesterMarksList"></ul>
+  </div>
+
+  <!-- Display Student Photo -->
+  <div class="photo-container">
+    <h3>Student Photo</h3>
+    <img id="studentPhotoDisplay" src="" alt="Student Photo" style="display: none;">
+  </div>
+
+  <!-- Edit Request Section -->
+  <div class="edit-request" id="editRequestSection" style="display: none;">
+    <button id="editRequestButton" onclick="sendEditRequest()">Send Edit Request</button>
+  </div>
+
+</div>
+
+<footer>
+  <p>&copy; 2024 Student Bio Data Management System</p>
+</footer>
+
+<script>
+  // Function to send an edit request
+  function sendEditRequest() {
+    fetch('/api/send-edit-request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ regNo: document.getElementById('regNo').value }),
+    })
+    .then(response => response.json())
+    .then(data => alert('Edit request sent successfully!'))
+    .catch(error => console.error('Error sending edit request:', error));
+  }
+
+  // Fetch and display student details and marks
+  window.onload = async () => {
+    try {
+      const response = await fetch('/api/student/details');
+      const studentData = await response.json();
+
+      // Populate student details in the form
+      Object.keys(studentData).forEach(key => {
+        const field = document.getElementById(key);
+        if (field) field.value = studentData[key];
+      });
+
+      // Populate semester marks
+      const marksList = document.getElementById('semesterMarksList');
+      studentData.semesterMarks.forEach(mark => {
+        const li = document.createElement('li');
+        li.textContent = mark;
+        marksList.appendChild(li);
+      });
+
+      // Display student photo
+      const studentPhotoDisplay = document.getElementById('studentPhotoDisplay');
+      if (studentData.studentPhoto) {
+        studentPhotoDisplay.src = `/uploads/${studentData.studentPhoto}`;
+        studentPhotoDisplay.style.display = 'block';
+      }
+
+      // Handle form state and disable inputs after submission
+      if (studentData.isSubmitted) {
+        document.querySelectorAll('#bioDataForm input, #bioDataForm button').forEach(input => input.disabled = true);
+        document.getElementById('editRequestButton').style.display = 'block';  // Show edit request button
+      }
+
+      // Show edit request section if biodata is not editable
+      if (!studentData.isEditable) {
+        document.getElementById('editRequestSection').style.display = 'block';
+      }
+    } catch (error) {
+      console.error('Error fetching student data:', error);
+    }
+  };
+</script>
+
+</body>
+</html>

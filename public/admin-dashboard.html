@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #f0ad4e;
+      padding: 20px;
+      text-align: center;
+      color: white;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    .container {
+      width: 80%;
+      margin: 20px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #f0ad4e;
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #ec971f;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background-color: #f0ad4e;
+      color: white;
+    }
+
+    .student-details {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .student-details h3 {
+      margin-top: 0;
+    }
+
+    .details-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .details-section div {
+      flex: 1;
+      min-width: 200px;
+    }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Admin Dashboard</h1>
+</header>
+
+<div class="container">
+  <!-- Update Semester Marks Form -->
+  <form action="/api/update-marks" method="POST">
+    <h2>Update Semester Marks</h2>
+    <div class="form-group">
+      <label for="regNo">Student Registration Number</label>
+      <input type="text" id="regNo" name="regNo" required>
+    </div>
+    <div class="form-group">
+      <label for="marks">Semester Marks</label>
+      <input type="number" id="marks" name="marks" required>
+    </div>
+    <button type="submit">Update Marks</button>
+  </form>
+
+  <!-- View Student Details Form -->
+  <form id="viewStudentForm" onsubmit="viewStudentDetails(event)">
+    <h2>View Student Details</h2>
+    <div class="form-group">
+      <label for="viewRegNo">Student Registration Number</label>
+      <input type="text" id="viewRegNo" name="viewRegNo" required>
+    </div>
+    <button type="submit">View Details</button>
+  </form>
+
+  <!-- Student Details Display -->
+  <div id="studentDetails" class="student-details" style="display:none;">
+    <h3>Student Information</h3>
+    <div class="details-section" id="detailsSection"></div>
+    <button onclick="sendEditRequest()">Send Edit Request</button>
+  </div>
+
+</div>
+
+<footer>
+  <p>&copy; 2024 Admin Dashboard</p>
+</footer>
+
+<script>
+  // View student details function
+  async function viewStudentDetails(event) {
+    event.preventDefault();
+    const regNo = document.getElementById('viewRegNo').value;
+
+    try {
+      const response = await fetch(`/api/student/${regNo}`);
+      const student = await response.json();
+
+      if (student) {
+        const detailsSection = document.getElementById('detailsSection');
+        detailsSection.innerHTML = `
+          <div><strong>Name:</strong> ${student.personalDetails.name}</div>
+          <div><strong>DOB:</strong> ${student.personalDetails.dob}</div>
+          <div><strong>Phone:</strong> ${student.personalDetails.phone}</div>
+          <div><strong>Address:</strong> ${student.personalDetails.address}</div>
+          <div><strong>Department:</strong> ${student.personalDetails.department}</div>
+          <div><strong>UMIS Number:</strong> ${student.personalDetails.umisNumber}</div>
+          <div><strong>Email:</strong> ${student.personalDetails.mailId}</div>
+          <div><strong>Religion:</strong> ${student.academicDetails.religion}</div>
+          <div><strong>Community:</strong> ${student.academicDetails.community}</div>
+          <div><strong>Father's Occupation:</strong> ${student.academicDetails.fatherOccupation}</div>
+          <div><strong>Mother's Occupation:</strong> ${student.academicDetails.motherOccupation}</div>
+        `;
+        document.getElementById('studentDetails').style.display = 'block';
+      }
+    } catch (error) {
+      alert('Error fetching student details.');
+    }
+  }
+
+  // Send edit request
+  async function sendEditRequest() {
+    const regNo = document.getElementById('viewRegNo').value;
+
+    try {
+      const response = await fetch('/api/send-edit-request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ regNo }),
+      });
+
+      const result = await response.json();
+      if (response.status === 200) {
+        alert(result.message);
+      } else {
+        alert('Error sending edit request.');
+      }
+    } catch (error) {
+      alert('Error sending edit request.');
+    }
+  }
+</script>
+
+</body>
+</html>
