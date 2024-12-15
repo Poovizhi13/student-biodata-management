@@ -64,7 +64,6 @@ router.post('/login', userController.loginUser);
 // ---------------------------
 router.get('/all', userController.getAllUsers);
 
-
 // ---------------------------
 // Submit Student Biodata
 // ---------------------------
@@ -137,7 +136,6 @@ router.post('/send-edit-request', async (req, res) => {
     res.status(500).json({ error: 'Error sending edit request.' });
   }
 });
-
 
 // ---------------------------
 // Admin Update Marks Route

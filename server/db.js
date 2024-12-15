@@ -2,18 +2,14 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    const uri = process.env.MONGO_DB_URL; // Ensure this is the correct variable
-    if (!uri) {
-      console.error('MongoDB URI is undefined.');
-      return;
-    }
-    await mongoose.connect(uri, {
+    await mongoose.connect('mongodb://localhost:27017/student_biodata_system', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log('MongoDB connected successfully!');
+    console.log('Database connected');
   } catch (err) {
-    console.error('MongoDB connection error:', err);
+    console.error('Database connection error:', err);
+    process.exit(1); // Exit the process with failure
   }
 };
 

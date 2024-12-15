@@ -1,6 +1,5 @@
 const { User } = require('../models/user');  // Import User model
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 const multer = require('multer');
 
 // Multer setup for photo upload
@@ -24,10 +23,8 @@ exports.registerUser = async (req, res) => {
             return res.status(400).json({ error: 'Password must be at least 6 characters long' });
         }
 
-        // Hash the password before saving
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const newUser = new User({ email, password: hashedPassword, role });  // Store hashed password
+        // Directly store the plain password
+        const newUser = new User({ email, password, role });  // Store plain password
         await newUser.save();
         res.status(201).json({ message: 'User registered successfully' });
     } catch (err) {
@@ -45,9 +42,8 @@ exports.loginUser = async (req, res) => {
             return res.status(404).send('User not found.');
         }
 
-        // Compare the entered password with the stored password (hashed)
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
+        // Compare the entered password with the stored plain password
+        if (password !== user.password) {
             return res.status(400).send('Invalid password.');
         }
 
