@@ -103,12 +103,33 @@ router.post('/submit-biodata', upload.single('studentPhoto'), async (req, res) =
       { upsert: true, new: true }
     );
 
-    res.status(200).json({ message: 'Biodata submitted successfully.' });
+    res.redirect('/student-details');
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error submitting biodata.' });
   }
 });
+
+
+// Route for submitting student details
+router.post('/api/submit-details', async (req, res) => {
+    const { userId, personalDetails, academicDetails } = req.body;
+
+    try {
+        // Update user's details in the database
+        await User.findByIdAndUpdate(userId, {
+            personalDetails,
+            academicDetails,
+            detailsSubmitted: true,
+        });
+
+        res.status(200).json({ message: 'Details submitted successfully' });
+    } catch (err) {
+        console.error('Error submitting details:', err);
+        res.status(500).json({ error: 'Error submitting details' });
+    }
+});
+
 
 // ---------------------------
 // Send Edit Request

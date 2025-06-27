@@ -9,7 +9,8 @@ require('dotenv').config(); // Ensure dotenv is loaded before using the variable
 const session = require('express-session');
 const User = require('./models/user'); // Import the User model
 const userRoutes = require('./routes/userRoutes'); // Adjust the path if needed
-const editRequestRoutes = require('./routes/editRequestRoutes'); // Import the editRequestRoutes
+const editRequestRoutes = require('./routes/editRequestRoutes');
+const StudentDetails = require('./models/studentsDetails');
 
 const app = express();
 const port = process.env.PORT || 3000; // Use PORT from .env or default to 3000
@@ -108,30 +109,44 @@ app.post('/api/users/register', async (req, res) => {
 
 // Login route
 app.post('/api/users/login', async (req, res) => {
-    const { email, password } = req.body;
-  
-    try {
+  const { email, password } = req.body;
+
+  try {
+      // Find the user by email
       const user = await User.findOne({ email });
-  
+
       if (!user) {
-        return res.status(401).json({ error: 'User not found' });
+          // If user is not found
+          return res.status(401).json({ error: 'User not found' });
       }
-  
+
       if (user.password !== password) {
-        return res.status(401).json({ error: 'Incorrect password' });
+          // If password does not match
+          return res.status(401).json({ error: 'Incorrect password' });
       }
-  
-      // Set session user
-      req.session.user = user;
-  
-      // Redirect based on role
-      const redirectTo = user.role === 'admin' ? '/admin-dashboard' : '/user-dashboard';
-      res.redirect(redirectTo);
-    } catch (err) {
+      const studentDetails = await StudentDetails.findOne({ userId: user._id });
+
+      if (studentDetails) {
+          // Redirect to `student-details.html` if details are already submitted
+          return res.redirect('/student-details');
+      } else {
+          // Set session for the logged-in user
+          req.session.user = user;
+
+          // Redirect based on user role if details are not submitted
+          if (user.role === 'student') {
+              return res.redirect('/user-dashboard');
+          } else {
+              return res.redirect('/admin-dashboard');
+          } 
+      }
+  } catch (err) {
       console.error('Login error:', err);
       res.status(500).json({ error: 'Error logging in' });
-    }
+  }
 });
+
+
 
 // Admin Dashboard route
 app.get('/admin-dashboard', async (req, res) => {
